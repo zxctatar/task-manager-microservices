@@ -22,5 +22,7 @@ postgres:
   password: app_user_pass
   sslmode: disable
 
+logger:
+  level: local
+
 redis:
-  
