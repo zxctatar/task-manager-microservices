@@ -3,6 +3,7 @@ restapi:
   write_timeout: 20s
   read_timeout: 10s
   shutdown_timeout: 10s
+  request_timeout: 15s
 
 grpc:
   port: 44045

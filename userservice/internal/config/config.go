@@ -22,6 +22,7 @@ type RestAPIConfig struct {
 	WriteTimeout    time.Duration `yaml:"write_timeout"`
 	ReadTimeout     time.Duration `yaml:"read_timeout"`
 	ShutdownTimeout time.Duration `yaml:"shutdown_timeout"`
+	RequestTimeout  time.Duration `yaml:"request_timeout"`
 }
 
 type GRPCConfig struct {
