@@ -1,6 +1,7 @@
 restapi:
   port: 44044
-  timeout: 30s
+  write_timeout: 20s
+  read_timeout: 10s
 
 grpc:
   port: 44045
