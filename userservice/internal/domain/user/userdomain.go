@@ -1,19 +1,19 @@
 package userdomain
 
 type UserDomain struct {
-	FirstName string
+	FirstName  string
 	MiddleName string
-	LastName string
-	Password string
-	Email string
+	LastName   string
+	Password   string
+	Email      string
 }
 
 func NewUserDomain(firstname, middlename, lastname, password, email string) *UserDomain {
 	return &UserDomain{
-		FirstName: firstname,
+		FirstName:  firstname,
 		MiddleName: middlename,
-		LastName: lastname,
-		Password: password,
-		Email: email,
+		LastName:   lastname,
+		Password:   password,
+		Email:      email,
 	}
 }
