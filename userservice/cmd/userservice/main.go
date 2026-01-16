@@ -58,7 +58,7 @@ func main() {
 	handl := resthandler.NewRestHandler(log, regUC)
 
 	// GIN SETTINGS
-	gin.SetMode(gin.DebugMode)
+	gin.SetMode(config.RestConf.Mode)
 	router := gin.New()
 	router.Use(middleware.TimeoutMiddleware(config.RestConf.RequestTimeout))
 	router.Use(gin.Recovery())
