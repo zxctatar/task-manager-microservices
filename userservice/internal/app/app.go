@@ -2,10 +2,12 @@ package app
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
 	"time"
 	"userservice/internal/config"
 	bcrypthash "userservice/internal/infrastructure/bcrypt"
+	"userservice/internal/infrastructure/postgres"
 	"userservice/internal/transport/rest"
 	resthandler "userservice/internal/transport/rest/handler"
 	"userservice/internal/usecase/implementations/registration"
@@ -15,10 +17,13 @@ type App struct {
 	log        *slog.Logger
 	restServer *rest.RestServer
 	cfg        *config.Config
+	db         *sql.DB
 }
 
 func NewApp(cfg *config.Config, log *slog.Logger) *App {
-	pos := mustLoadPostgres(cfg)
+	db := mustLoadPostgres(cfg)
+
+	pos := postgres.NewPostgres(db)
 
 	hasher := bcrypthash.NewBcryptHasher()
 
@@ -44,4 +49,6 @@ func (a *App) Stop() {
 	defer cancel()
 
 	a.restServer.Stop(ctx)
+
+	a.db.Close()
 }
