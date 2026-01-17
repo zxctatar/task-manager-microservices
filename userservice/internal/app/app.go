@@ -37,7 +37,7 @@ func NewApp(cfg *config.Config, log *slog.Logger) *App {
 		log:        log,
 		restServer: restServer,
 		cfg:        cfg,
-		db:			db,
+		db:         db,
 	}
 }
 
