@@ -28,7 +28,7 @@ func NewRegUC(log *slog.Logger, storage storagerepo.StorageRepo, passHasher hash
 
 func (r *RegUC) RegUser(ctx context.Context, in *regmodel.RegInput) (*regmodel.RegOutput, error) {
 	const op = "registration.RegUser"
-	log := r.log.With(slog.String("op", op))
+	log := r.log.With(slog.String("op", op), slog.String("email", in.Email))
 
 	log.Info("user registration started")
 
