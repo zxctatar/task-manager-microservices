@@ -70,7 +70,8 @@ type RedisConfig struct {
 	Host     string `yaml:"host"`
 	Port     uint32 `yaml:"port"`
 	Password string
-	DB       int `yaml:"db"`
+	DB       int           `yaml:"db"`
+	TTL      time.Duration `yaml:"ttl"`
 }
 
 func MustLoad() Config {
@@ -157,6 +158,8 @@ func mustLoadRedisConfig(cfg *Config) {
 	}
 	db, _ := strconv.Atoi(os.Getenv("REDIS_DB"))
 	cfg.RedisConf.DB = db
+	h, _ := strconv.Atoi(os.Getenv("REDIS_TTL_H"))
+	cfg.RedisConf.TTL = time.Hour * time.Duration(h)
 }
 
 func fetchConfigPath() string {
