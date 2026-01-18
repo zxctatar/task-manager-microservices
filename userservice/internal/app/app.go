@@ -31,7 +31,7 @@ func NewApp(cfg *config.Config, log *slog.Logger) *App {
 
 	pos := postgres.NewPostgres(db)
 	hasher := bcrypthash.NewBcryptHasher()
-	redis := myredis.NewRedis(client, &cfg.RestConf.ReadTimeout)
+	redis := myredis.NewRedis(client, &cfg.RedisConf.TTL)
 
 	regUC := registration.NewRegUC(log, pos, hasher)
 	logUC := login.NewLoginUC(log, hasher, redis)
