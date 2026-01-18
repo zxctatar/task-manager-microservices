@@ -34,7 +34,7 @@ func NewApp(cfg *config.Config, log *slog.Logger) *App {
 	redis := myredis.NewRedis(client, &cfg.RedisConf.TTL)
 
 	regUC := registration.NewRegUC(log, pos, hasher)
-	logUC := login.NewLoginUC(log, hasher, redis)
+	logUC := login.NewLoginUC(log, pos, hasher, redis)
 
 	handl := resthandler.NewRestHandler(log, regUC, logUC)
 
