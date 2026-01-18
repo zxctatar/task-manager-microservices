@@ -36,8 +36,8 @@ services:
       - DB_PASS=${DB_PASS}
       - DB_MODE=${DB_MODE}
     depends_on:
-      postgres:
-        condition: service_healthy
+      migrator:
+        condition: service_completed_successfully 
     ports:
       - 44044:44044
     volumes:
