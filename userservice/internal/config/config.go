@@ -31,6 +31,7 @@ type RestAPIConfig struct {
 	ShutdownTimeout time.Duration `yaml:"shutdown_timeout"`
 	RequestTimeout  time.Duration `yaml:"request_timeout"`
 	Mode            string        `yaml:"mode"`
+	CookieTTL       time.Duration `yaml:"cookie-ttl"`
 }
 
 type GRPCConfig struct {

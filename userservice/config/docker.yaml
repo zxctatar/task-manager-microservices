@@ -7,6 +7,7 @@ restapi:
   shutdown_timeout: 10s
   request_timeout: 15s
   mode: debug
+  cookie-ttl: 1h
 
 grpc:
   port: 44045
