@@ -55,6 +55,7 @@ func TestRegUser(t *testing.T) {
 
 			expectSave: true,
 			saveInput: userdomain.NewUserDomain(
+				0,
 				"Ivan",
 				"Ivanovich",
 				"Ivanov",
@@ -81,6 +82,7 @@ func TestRegUser(t *testing.T) {
 			expectFindByEmail: true,
 			findByEmailInput:  "gmail@gmail.com",
 			findByEmailUserReturn: userdomain.NewUserDomain(
+				1,
 				"Ivan",
 				"Ivanovich",
 				"Ivanov",

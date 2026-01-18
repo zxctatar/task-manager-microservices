@@ -11,6 +11,10 @@ import (
 	regmodel "userservice/internal/usecase/models/registration"
 )
 
+var (
+	invalidId uint32 = 0
+)
+
 type RegUC struct {
 	log *slog.Logger
 
@@ -49,6 +53,7 @@ func (r *RegUC) RegUser(ctx context.Context, in *regmodel.RegInput) (*regmodel.R
 	}
 
 	ud = userdomain.NewUserDomain(
+		invalidId,
 		in.FirstName,
 		in.MiddleName,
 		in.LastName,
