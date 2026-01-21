@@ -99,10 +99,6 @@ func MustLoad() Config {
 		panic("cannot parse config path")
 	}
 
-	if config.Type == dockerType {
-		mustLoadPostgresConfig(&config)
-		mustLoadRedisConfig(&config)
-	}
 	loadSecrets(&config)
 
 	return config
@@ -110,7 +106,7 @@ func MustLoad() Config {
 
 func loadSecrets(cfg *Config) {
 	if cfg.Type == localType {
-		cfg.PostgresConf.Password = os.Getenv("DB_USER_PASS")
+		cfg.PostgresConf.Password = os.Getenv("DB_PASS")
 		if cfg.PostgresConf.Password == "" {
 			panic("PostgresConfig password field empty")
 		}
@@ -118,6 +114,9 @@ func loadSecrets(cfg *Config) {
 		if cfg.RedisConf.Password == "" {
 			panic("RedisConf password field empty")
 		}
+	} else if cfg.Type == dockerType {
+		mustLoadPostgresConfig(cfg)
+		mustLoadRedisConfig(cfg)
 	}
 }
 
