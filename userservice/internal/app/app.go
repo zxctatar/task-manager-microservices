@@ -9,6 +9,8 @@ import (
 	"userservice/internal/infrastructure/postgres"
 	myredis "userservice/internal/infrastructure/redis"
 	uuidgen "userservice/internal/infrastructure/uuid"
+	grpcserv "userservice/internal/transport/grpc"
+	grpchandler "userservice/internal/transport/grpc/handler"
 	"userservice/internal/transport/rest"
 	resthandler "userservice/internal/transport/rest/handler"
 	"userservice/internal/usecase/implementations/login"
@@ -21,6 +23,7 @@ import (
 type App struct {
 	log        *slog.Logger
 	restServer *rest.RestServer
+	grpcServer *grpcserv.GRPCServer
 	cfg        *config.Config
 	db         *sql.DB
 	client     *redis.Client
@@ -41,13 +44,16 @@ func NewApp() *App {
 	regUC := registration.NewRegUC(log, pos, hasher)
 	logUC := login.NewLoginUC(log, pos, hasher, redis, idgen)
 
-	handl := resthandler.NewRestHandler(log, &cfg.RestConf.CookieTTL, regUC, logUC)
+	resthandl := resthandler.NewRestHandler(log, &cfg.RestConf.CookieTTL, regUC, logUC)
+	grpchandl := grpchandler.NewGRPCHandler(log)
 
-	restServer := mustLoadHttpServer(&cfg, log, handl)
+	restServer := mustLoadHttpServer(&cfg, log, resthandl)
+	grpcserv := mustLoadGRPCServer(&cfg, log, grpchandl)
 
 	return &App{
 		log:        log,
 		restServer: restServer,
+		grpcServer: grpcserv,
 		cfg:        &cfg,
 		db:         db,
 		client:     client,
@@ -55,7 +61,8 @@ func NewApp() *App {
 }
 
 func (a *App) Run() {
-	a.restServer.MustStart()
+	go a.restServer.MustStart()
+	a.grpcServer.MustStart()
 }
 
 func (a *App) Stop() {
@@ -63,6 +70,7 @@ func (a *App) Stop() {
 	defer cancel()
 
 	a.restServer.Stop(ctx)
+	a.grpcServer.Stop()
 
 	a.db.Close()
 	a.client.Close()
