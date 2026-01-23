@@ -40,6 +40,21 @@ func (m *MockSessionRepo) EXPECT() *MockSessionRepoMockRecorder {
 	return m.recorder
 }
 
+// Get mocks base method.
+func (m *MockSessionRepo) Get(ctx context.Context, sessionId string) (uint32, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Get", ctx, sessionId)
+	ret0, _ := ret[0].(uint32)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Get indicates an expected call of Get.
+func (mr *MockSessionRepoMockRecorder) Get(ctx, sessionId any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Get", reflect.TypeOf((*MockSessionRepo)(nil).Get), ctx, sessionId)
+}
+
 // Save mocks base method.
 func (m *MockSessionRepo) Save(ctx context.Context, sessionId string, userId uint32) error {
 	m.ctrl.T.Helper()
