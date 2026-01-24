@@ -14,6 +14,7 @@ func mustLoadGRPCServer(cfg *config.Config, log *slog.Logger, handl userservicev
 	serv := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			interceptor.RecoverInterceptor(log),
+			interceptor.TimeoutInterceptor(log, cfg.GrpcConf.Timeout),
 		),
 	)
 
