@@ -27,7 +27,7 @@ func NewGRPCServer(log *slog.Logger, port uint32, handl userservicev1.UserServic
 func (g *GRPCServer) MustStart() {
 	const op = "grpcserv.MustStart"
 	g.log.Info("starting grpc server", slog.String("op", op), slog.Int("port", int(g.port)))
-	l, err := net.Listen("tcp", fmt.Sprintf("localhost:%d", g.port))
+	l, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", g.port))
 	if err != nil {
 		panic("failed listen grpc server: " + err.Error())
 	}
