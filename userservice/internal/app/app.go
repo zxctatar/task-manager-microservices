@@ -46,7 +46,7 @@ func NewApp() *App {
 	logUC := login.NewLoginUC(log, pos, hasher, redis, idgen)
 	authUC := authenticate.NewAuthUC(log, redis)
 
-	resthandl := resthandler.NewRestHandler(log, &cfg.RestConf.CookieTTL, regUC, logUC)
+	resthandl := resthandler.NewRestHandler(log, cfg.RestConf.CookieTTL, regUC, logUC)
 	grpchandl := grpchandler.NewGRPCHandler(log, cfg.GrpcConf.Timeout, authUC)
 
 	restServer := mustLoadHttpServer(&cfg, log, resthandl)

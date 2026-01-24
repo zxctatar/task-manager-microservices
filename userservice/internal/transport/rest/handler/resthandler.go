@@ -18,13 +18,13 @@ import (
 
 type RestHandler struct {
 	log       *slog.Logger
-	cookieTTL *time.Duration
+	cookieTTL time.Duration
 
 	regUC interfaces.RegistrationUsecase
 	logUC interfaces.LoginUsecase
 }
 
-func NewRestHandler(log *slog.Logger, cookieTTL *time.Duration, regUC interfaces.RegistrationUsecase, logUC interfaces.LoginUsecase) *RestHandler {
+func NewRestHandler(log *slog.Logger, cookieTTL time.Duration, regUC interfaces.RegistrationUsecase, logUC interfaces.LoginUsecase) *RestHandler {
 	return &RestHandler{
 		log:       log,
 		cookieTTL: cookieTTL,

@@ -106,7 +106,7 @@ func TestRestHandler_Registration(t *testing.T) {
 
 			log := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-			handl := NewRestHandler(log, &tt.cookieTTL, regMock, nil)
+			handl := NewRestHandler(log, tt.cookieTTL, regMock, nil)
 
 			gin.SetMode(gin.DebugMode)
 			router := gin.New()
@@ -222,7 +222,7 @@ func TestRestHandler_Login(t *testing.T) {
 			}
 			log := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-			handl := NewRestHandler(log, &tt.cookieTTL, nil, loginUCMock)
+			handl := NewRestHandler(log, tt.cookieTTL, nil, loginUCMock)
 
 			gin.SetMode(gin.DebugMode)
 			router := gin.New()
