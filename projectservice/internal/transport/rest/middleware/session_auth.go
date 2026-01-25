@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 	"projectservice/internal/repository/sessionvalidator"
 	"time"
@@ -10,7 +11,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SessionAuthMiddleware(sessionValid sessionalidator.SessionValidator, respTimeout time.Duration) gin.HandlerFunc {
+func SessionAuthMiddleware(log *slog.Logger, sessionValid sessionalidator.SessionValidator, respTimeout time.Duration) gin.HandlerFunc {
+	const op = "middleware.SessionAuthMiddleware"
 	return func(ctx *gin.Context) {
 		sessionId, ok := ctx.Get("sessionId")
 		if !ok {
@@ -24,6 +26,7 @@ func SessionAuthMiddleware(sessionValid sessionalidator.SessionValidator, respTi
 
 		userId, err := sessionValid.GetIdBySession(tctx, sessionId.(string))
 		if err != nil {
+			log.Info("failed to get userID", slog.String("op", op))
 			if errors.Is(err, context.DeadlineExceeded) || errors.Is(tctx.Err(), context.DeadlineExceeded) {
 				ctx.JSON(http.StatusGatewayTimeout, gin.H{
 					"error": "user service timeout",
