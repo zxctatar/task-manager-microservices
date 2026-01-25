@@ -4,6 +4,7 @@ import (
 	"context"
 	"log/slog"
 	"projectservice/internal/config"
+	userserviceclient "projectservice/internal/infrastructure/grpc/userservice"
 	"projectservice/internal/transport/rest"
 	"projectservice/pkg/logger"
 )
@@ -18,7 +19,9 @@ func NewApp() *App {
 	cfg := config.MustLoad()
 	log := logger.SetupLogger(cfg.LoggerConf.Level)
 
-	serv := mustLoadHttpServer(cfg, log)
+	sessionValid := userserviceclient.NewUserServiceClient(log, cfg.ConnectionsConf.UserServConnConf.Host, cfg.ConnectionsConf.UserServConnConf.Port)
+
+	serv := mustLoadHttpServer(cfg, log, sessionValid)
 
 	return &App{
 		log:  log,
