@@ -17,8 +17,8 @@ func mustLoadHttpServer(cfg *config.Config, log *slog.Logger, sessionValid sessi
 	gin.SetMode(cfg.RestConf.Mode)
 	router := gin.New()
 	router.Use(gin.Recovery())
-	router.Use(middleware.GetSessionMiddleware())
-	router.Use(middleware.SessionAuthMiddleware(sessionValid, cfg.ConnectionsConf.UserServConnConf.ResponseTimeout))
+	router.Use(middleware.GetSessionMiddleware(log))
+	router.Use(middleware.SessionAuthMiddleware(log, sessionValid, cfg.ConnectionsConf.UserServConnConf.ResponseTimeout))
 	router.Use(middleware.TimeoutMiddleware(cfg.RestConf.RequestTimeout))
 	handl := resthandler.NewHandler(log)
 
