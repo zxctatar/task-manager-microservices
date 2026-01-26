@@ -3,11 +3,11 @@ services:
     image: postgres:latest
     container_name: postgres_container
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASS}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${US_DB_USER}
+      - POSTGRES_PASSWORD=${US_DB_PASS}
+      - POSTGRES_DB=${US_DB_NAME}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      test: ["CMD-SHELL", "pg_isready -U ${US_DB_USER} -d ${US_DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -17,9 +17,9 @@ services:
     container_name: redis_container
     command: >
       redis-server
-      --requirepass ${REDIS_PASS}
+      --requirepass ${US_REDIS_PASS}
     healthcheck:
-      test: ["CMD-SHELL", "redis-cli -a ${REDIS_PASS}", "ping"]
+      test: ["CMD-SHELL", "redis-cli -a ${US_REDIS_PASS}", "ping"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -34,7 +34,7 @@ services:
       - ./userservice/migrations:/migrations
     command: >
       -path /migrations
-      -database postgres://${DB_USER}:${DB_PASS}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_MODE}
+      -database postgres://${US_DB_USER}:${US_DB_PASS}@${US_DB_HOST}:${US_DB_PORT}/${US_DB_NAME}?sslmode=${US_DB_MODE}
       up
 
   userservice:
@@ -42,17 +42,17 @@ services:
     container_name: userservice_container
     environment:
       - CONFIG=/app/config/docker.yaml
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
-      - REDIS_PASS=${REDIS_PASS}
-      - REDIS_DB=${REDIS_DB}
-      - REDIS_TTL_SEC=${REDIS_TTL_SEC}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_USER=${DB_USER}
-      - DB_NAME=${DB_NAME}
-      - DB_PASS=${DB_PASS}
-      - DB_MODE=${DB_MODE}
+      - REDIS_HOST=${US_REDIS_HOST}
+      - REDIS_PORT=${US_REDIS_PORT}
+      - REDIS_PASS=${US_REDIS_PASS}
+      - REDIS_DB=${US_REDIS_DB}
+      - REDIS_TTL_SEC=${US_REDIS_TTL_SEC}
+      - DB_HOST=${US_DB_HOST}
+      - DB_PORT=${US_DB_PORT}
+      - DB_USER=${US_DB_USER}
+      - DB_NAME=${US_DB_NAME}
+      - DB_PASS=${US_DB_PASS}
+      - DB_MODE=${US_DB_MODE}
     depends_on:
       migrator:
         condition: service_completed_successfully 
