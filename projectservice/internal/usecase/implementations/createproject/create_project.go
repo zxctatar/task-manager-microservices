@@ -32,7 +32,7 @@ func (c *CreateProjectUC) Execute(ctx context.Context, in *createmodel.CreatePro
 
 	proj, err := projectdomain.NewProjectDomain(in.OwnerId, in.Name)
 	if err != nil {
-		log.Warn("can't create a project", slog.String("error", err.Error()))
+		log.Info("can't create a project", slog.String("error", err.Error()))
 		return &createmodel.CreateProjectOutput{IsCreated: false}, err
 	}
 
