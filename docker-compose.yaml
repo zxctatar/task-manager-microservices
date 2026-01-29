@@ -1,13 +1,26 @@
 services:
-  postgres:
+  userservice_postgres:
     image: postgres:latest
-    container_name: postgres_container
+    container_name: userservice_postgres_container
     environment:
       - POSTGRES_USER=${US_DB_USER}
       - POSTGRES_PASSWORD=${US_DB_PASS}
       - POSTGRES_DB=${US_DB_NAME}
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${US_DB_USER} -d ${US_DB_NAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  projectservice_postgres:
+    image: postgres:latest
+    container_name: projectservice_postgres_container
+    environment:
+      - POSTGRES_USER=${PS_DB_USER}
+      - POSTGRES_PASSWORD=${PS_DB_PASS}
+      - POSTGRES_DB=${PS_DB_NAME}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PS_DB_USER} -d ${PS_DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -24,17 +37,30 @@ services:
       timeout: 5s
       retries: 5
 
-  migrator:
+  userservice_migrator:
     image: migrate/migrate
-    container_name: migrator_container
+    container_name: userservice_migrator_container
     depends_on:
-      postgres:
+      userservice_postgres:
         condition: service_healthy
     volumes:
       - ./userservice/migrations:/migrations
     command: >
       -path /migrations
       -database postgres://${US_DB_USER}:${US_DB_PASS}@${US_DB_HOST}:${US_DB_PORT}/${US_DB_NAME}?sslmode=${US_DB_MODE}
+      up
+
+  projectservice_migrator:
+    image: migrate/migrate
+    container_name: projectservice_migrator_container
+    depends_on:
+      projectservice_postgres:
+        condition: service_healthy
+    volumes:
+      - ./projectservice/migrations:/migrations
+    command: >
+      -path /migrations
+      -database postgres://${PS_DB_USER}:${PS_DB_PASS}@${PS_DB_HOST}:${PS_DB_PORT}/${PS_DB_NAME}?sslmode=${PS_DB_MODE}
       up
 
   userservice:
@@ -54,7 +80,7 @@ services:
       - DB_PASS=${US_DB_PASS}
       - DB_MODE=${US_DB_MODE}
     depends_on:
-      migrator:
+      userservice_migrator:
         condition: service_completed_successfully 
       redis:
         condition: service_healthy
@@ -63,4 +89,23 @@ services:
       - 44045:44045
     volumes:
       - ./userservice/config:/app/config
-    
+
+  projectservice:
+    build: ./projectservice/
+    container_name: projectservice_container
+    environment:
+      - CONFIG=/app/config/docker.yaml
+      - DB_HOST=${PS_DB_HOST}
+      - DB_PORT=${PS_DB_PORT}
+      - DB_USER=${PS_DB_USER}
+      - DB_NAME=${PS_DB_NAME}
+      - DB_PASS=${PS_DB_PASS}
+      - DB_MODE=${PS_DB_MODE}
+    depends_on:
+      projectservice_migrator:
+        condition: service_completed_successfully
+    ports:
+      - 44046:44046
+      - 44047:44047
+    volumes:
+      - ./projectservice/config:/app/config
