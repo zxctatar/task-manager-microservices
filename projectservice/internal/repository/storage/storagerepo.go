@@ -1,7 +1,11 @@
 package storage
 
-import "context"
+import (
+	"context"
+	projectdomain "projectservice/internal/domain/project"
+)
 
 type StorageRepo interface {
-	Save(ctx context.Context, ownerId uint32, name string) error
+	FindByName(ctx context.Context, ownerId uint32, name string) (*projectdomain.ProjectDomain, error)
+	Save(ctx context.Context, proj *projectdomain.ProjectDomain) error
 }
