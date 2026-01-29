@@ -1,0 +1,22 @@
+type: docker
+
+restapi:
+  port: 44046
+  write_timeout: 20s
+  read_timeout: 10s
+  shutdown_timeout: 10s
+  request_timeout: 15s
+  mode: debug
+
+grpc:
+  port: 44047
+  timeout: 30s
+
+connections:
+  userservice:
+    host: userservice
+    port: 44045
+    response_timeout: 5s
+
+logger:
+  level: debug
