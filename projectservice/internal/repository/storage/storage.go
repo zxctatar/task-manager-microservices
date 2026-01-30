@@ -5,6 +5,6 @@ import (
 	projectdomain "projectservice/internal/domain/project"
 )
 
-type StorageRepo interface {
+type Storage interface {
 	Save(ctx context.Context, proj *projectdomain.ProjectDomain) error
 }
