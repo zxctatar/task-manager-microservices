@@ -10,6 +10,7 @@ import (
 	"projectservice/internal/transport/rest"
 	resthandler "projectservice/internal/transport/rest/handler"
 	"projectservice/internal/usecase/implementations/createproject"
+	"projectservice/internal/usecase/implementations/deleteproject"
 	"projectservice/pkg/logger"
 )
 
@@ -29,8 +30,9 @@ func NewApp() *App {
 	postgres := postgres.NewPostgres(db)
 
 	createProjectUC := createproject.NewCreateProjectUC(log, postgres)
+	deleteProjectUC := deleteproject.NewDeleteProjectUC(log, postgres)
 
-	handl := resthandler.NewHandler(log, createProjectUC)
+	handl := resthandler.NewHandler(log, createProjectUC, deleteProjectUC)
 
 	serv := mustLoadHttpServer(cfg, log, handl, sessionValid)
 
