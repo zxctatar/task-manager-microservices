@@ -156,6 +156,7 @@ func (h *RestHandler) Delete(ctx *gin.Context) {
 				"error": "internal server error",
 			})
 		}
+		return
 	}
 
 	log.Info("delete request completed successfully")
