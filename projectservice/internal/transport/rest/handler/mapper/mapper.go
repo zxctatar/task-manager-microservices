@@ -3,8 +3,10 @@ package handlmapper
 import (
 	createdto "projectservice/internal/transport/rest/handler/dto/create"
 	deletedto "projectservice/internal/transport/rest/handler/dto/delete"
+	getalldto "projectservice/internal/transport/rest/handler/dto/getall"
 	createmodel "projectservice/internal/usecase/models/createproject"
 	deletemodel "projectservice/internal/usecase/models/deleteproject"
+	getallmodel "projectservice/internal/usecase/models/getallprojects"
 )
 
 func CreateRequestToInput(cr *createdto.CreateRequest, userId uint32) *createmodel.CreateProjectInput {
@@ -22,5 +24,13 @@ func DeleteRequestToInput(dr *deletedto.DeleteRequest, userId uint32) *deletemod
 }
 
 func DeleteOutputToResponse(do *deletemodel.DeleteProjectOutput) *deletedto.DeleteResponse {
-	return &deletedto.DeleteResponse{IsDeleted: do.IsDeleted}
+	return &deletedto.DeleteResponse{
+		IsDeleted: do.IsDeleted,
+	}
+}
+
+func GetAllOutputToResponse(gao *getallmodel.GetAllProjectsOutput) *getalldto.GetAllResponse {
+	return &getalldto.GetAllResponse{
+		Projects: gao.Projects,
+	}
 }
