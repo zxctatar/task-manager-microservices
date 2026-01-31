@@ -200,6 +200,7 @@ func (h *RestHandler) GetAll(ctx *gin.Context) {
 				"error": "internal server error",
 			})
 		}
+		return
 	}
 
 	log.Info("get all request completed successfully")
