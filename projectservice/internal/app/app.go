@@ -16,11 +16,11 @@ import (
 )
 
 type App struct {
-	log          *slog.Logger
-	cfg          *config.Config
-	serv         *rest.RestServer
-	db           *sql.DB
-	sessionValid *userserviceclient.UserServiceClient
+	log    *slog.Logger
+	cfg    *config.Config
+	serv   *rest.RestServer
+	db     *sql.DB
+	client *userserviceclient.UserServiceClient
 }
 
 func NewApp() *App {
@@ -28,7 +28,7 @@ func NewApp() *App {
 	log := logger.SetupLogger(cfg.LoggerConf.Level)
 	db := mustLoadPostgres(cfg)
 
-	sessionValid := userserviceclient.NewUserServiceClient(log, cfg.ConnectionsConf.UserServConnConf.Host, cfg.ConnectionsConf.UserServConnConf.Port)
+	client := userserviceclient.NewUserServiceClient(log, cfg.ConnectionsConf.UserServConnConf.Host, cfg.ConnectionsConf.UserServConnConf.Port)
 	postgres := postgres.NewPostgres(db)
 
 	createProjectUC := createproject.NewCreateProjectUC(log, postgres)
@@ -37,14 +37,14 @@ func NewApp() *App {
 
 	handl := resthandler.NewHandler(log, createProjectUC, deleteProjectUC, getAllProjectsUC)
 
-	serv := mustLoadHttpServer(cfg, log, handl, sessionValid)
+	serv := mustLoadHttpServer(cfg, log, handl, client)
 
 	return &App{
-		log:          log,
-		cfg:          cfg,
-		serv:         serv,
-		db:           db,
-		sessionValid: sessionValid,
+		log:    log,
+		cfg:    cfg,
+		serv:   serv,
+		db:     db,
+		client: client,
 	}
 }
 
@@ -57,6 +57,6 @@ func (a *App) Stop() {
 	defer cancel()
 	a.serv.Stop(ctx)
 
-	a.sessionValid.Stop()
+	a.client.Stop()
 	a.db.Close()
 }
