@@ -5,18 +5,26 @@ import (
 	"log/slog"
 	"net/http"
 	"taskservice/internal/config"
+	"taskservice/internal/repository/sessionvalidator"
 	"taskservice/internal/transport/rest"
+	resthandler "taskservice/internal/transport/rest/handler"
+	"taskservice/internal/transport/rest/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
-func mustLoadRestServer(cfg *config.Config, log *slog.Logger) *rest.RestServer {
+func mustLoadRestServer(cfg *config.Config, log *slog.Logger, handl *resthandler.RestHandler, sessionValid sessionvalidator.SessionValidator) *rest.RestServer {
 	gin.SetMode(cfg.RestConf.Mode)
 	router := gin.New()
 	router.Use(gin.Recovery())
-	router.GET("/hello", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, "Hello World")
-	})
+	router.Use(middleware.TimeoutMiddleware(cfg.RestConf.RequestTimeout))
+	router.Use(middleware.GetSessionMiddleware(log))
+	router.Use(middleware.SessionAuthMiddleware(log, sessionValid, cfg.ConnectionsConf.UserServConnConf.ResponseTimeout))
+	
+	router.POST("/task/create", handl.Create)
+	router.DELETE("task/delete", handl.Delete)
+	router.GET("/task/getall", handl.GetAll)
+	router.PATCH("/task/change", handl.Change)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.RestConf.Port),
