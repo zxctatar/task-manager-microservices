@@ -20,7 +20,7 @@ func mustLoadRestServer(cfg *config.Config, log *slog.Logger, handl *resthandler
 	router.Use(middleware.TimeoutMiddleware(cfg.RestConf.RequestTimeout))
 	router.Use(middleware.GetSessionMiddleware(log))
 	router.Use(middleware.SessionAuthMiddleware(log, sessionValid, cfg.ConnectionsConf.UserServConnConf.ResponseTimeout))
-	
+
 	router.POST("/task/create", handl.Create)
 	router.DELETE("task/delete", handl.Delete)
 	router.GET("/task/getall", handl.GetAll)

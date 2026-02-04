@@ -12,7 +12,7 @@ import (
 type App struct {
 	cfg        *config.Config
 	restServer *rest.RestServer
-	client *userservice.UserServiceClient
+	client     *userservice.UserServiceClient
 }
 
 func NewApp() *App {
@@ -27,7 +27,7 @@ func NewApp() *App {
 	return &App{
 		cfg:        cfg,
 		restServer: restServer,
-		client: client,
+		client:     client,
 	}
 }
 
