@@ -16,10 +16,11 @@ import (
 )
 
 type App struct {
-	log  *slog.Logger
-	cfg  *config.Config
-	serv *rest.RestServer
-	db   *sql.DB
+	log          *slog.Logger
+	cfg          *config.Config
+	serv         *rest.RestServer
+	db           *sql.DB
+	sessionValid *userserviceclient.UserServiceClient
 }
 
 func NewApp() *App {
@@ -39,10 +40,11 @@ func NewApp() *App {
 	serv := mustLoadHttpServer(cfg, log, handl, sessionValid)
 
 	return &App{
-		log:  log,
-		cfg:  cfg,
-		serv: serv,
-		db:   db,
+		log:          log,
+		cfg:          cfg,
+		serv:         serv,
+		db:           db,
+		sessionValid: sessionValid,
 	}
 }
 
@@ -55,5 +57,6 @@ func (a *App) Stop() {
 	defer cancel()
 	a.serv.Stop(ctx)
 
+	a.sessionValid.Stop()
 	a.db.Close()
 }
