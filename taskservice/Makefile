@@ -6,3 +6,9 @@ local:
 	. ./.env; \
 	set +a; \
 	go run cmd/taskservice/main.go --config=./config/local.yaml
+
+migrate_all_up:
+	set -a; \
+	. ./.env; \
+	set +a; \
+	migrate -path ./migrations -database "postgres://$$MIG_NAME:$$MIG_PASS@$$DB_HOST:$$DB_PORT/$$DB_NAME?sslmode=$$DB_MODE" up
