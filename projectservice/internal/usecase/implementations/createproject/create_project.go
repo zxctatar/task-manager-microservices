@@ -10,6 +10,10 @@ import (
 	createmodel "projectservice/internal/usecase/models/createproject"
 )
 
+var (
+	invalidId uint32 = 0
+)
+
 type CreateProjectUC struct {
 	log *slog.Logger
 
@@ -33,20 +37,20 @@ func (c *CreateProjectUC) Execute(ctx context.Context, in *createmodel.CreatePro
 	proj, err := projectdomain.NewProjectDomain(in.OwnerId, in.Name)
 	if err != nil {
 		log.Info("can't create a project", slog.String("error", err.Error()))
-		return createmodel.NewCreateProjectOutput(false), err
+		return createmodel.NewCreateProjectOutput(invalidId), err
 	}
 
-	err = c.stor.Save(ctx, proj)
+	id, err := c.stor.Save(ctx, proj)
 	if err != nil {
 		if errors.Is(err, storage.ErrAlreadyExists) {
 			log.Info("project already exists")
-			return createmodel.NewCreateProjectOutput(false), createerr.ErrAlreadyExists
+			return createmodel.NewCreateProjectOutput(invalidId), createerr.ErrAlreadyExists
 		}
 		log.Warn("error save project", slog.String("error", err.Error()))
-		return createmodel.NewCreateProjectOutput(false), err
+		return createmodel.NewCreateProjectOutput(invalidId), err
 	}
 
 	log.Info("project created")
 
-	return createmodel.NewCreateProjectOutput(true), nil
+	return createmodel.NewCreateProjectOutput(id), nil
 }
