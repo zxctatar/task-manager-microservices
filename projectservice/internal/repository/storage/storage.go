@@ -6,7 +6,7 @@ import (
 )
 
 type Storage interface {
-	Save(ctx context.Context, proj *projectdomain.ProjectDomain) error
-	Delete(ctx context.Context, proj *projectdomain.ProjectDomain) error
+	Save(ctx context.Context, proj *projectdomain.ProjectDomain) (uint32, error)
+	Delete(ctx context.Context, projectId uint32) error
 	GetAll(ctx context.Context, ownerId uint32) ([]*projectdomain.ProjectDomain, error)
 }
