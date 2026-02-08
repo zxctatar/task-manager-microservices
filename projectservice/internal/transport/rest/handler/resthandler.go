@@ -136,7 +136,7 @@ func (h *RestHandler) Delete(ctx *gin.Context) {
 		return
 	}
 
-	in := handlmapper.DeleteRequestToInput(req)
+	in := handlmapper.DeleteRequestToInput(req, userId)
 
 	out, err := h.deleteProjUC.Execute(ctx, in)
 	if err != nil {
