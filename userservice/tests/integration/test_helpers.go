@@ -12,8 +12,8 @@ import (
 
 const (
 	contentType = "application/json"
-	urlReg      = "http://localhost:44044/registration"
-	urlLog      = "http://localhost:44044/login"
+	urlReg      = "http://localhost:44044/user/registration"
+	urlLog      = "http://localhost:44044/user/login"
 )
 
 func uniqueEmail() string {
