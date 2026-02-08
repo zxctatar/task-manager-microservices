@@ -24,6 +24,7 @@ func TestCreateProject(t *testing.T) {
 		expStorage       bool
 		storageInpit     *projectdomain.ProjectDomain
 		storageReturnErr error
+		storageReturnId  uint32
 
 		createInput *createmodel.CreateProjectInput
 
@@ -36,10 +37,11 @@ func TestCreateProject(t *testing.T) {
 			expStorage:       true,
 			storageInpit:     &projectdomain.ProjectDomain{OwnerId: 1, Name: "Name"},
 			storageReturnErr: nil,
+			storageReturnId:  1,
 
 			createInput: createmodel.NewCreateProjectInput(1, "Name"),
 
-			expOut: createmodel.NewCreateProjectOutput(true),
+			expOut: createmodel.NewCreateProjectOutput(1),
 			expErr: nil,
 		}, {
 			testName: "Invalid domain",
@@ -47,10 +49,11 @@ func TestCreateProject(t *testing.T) {
 			expStorage:       false,
 			storageInpit:     &projectdomain.ProjectDomain{OwnerId: 1, Name: strings.Repeat("Name", 300)},
 			storageReturnErr: nil,
+			storageReturnId:  1,
 
 			createInput: createmodel.NewCreateProjectInput(1, strings.Repeat("Name", 300)),
 
-			expOut: createmodel.NewCreateProjectOutput(false),
+			expOut: createmodel.NewCreateProjectOutput(0),
 			expErr: projectdomain.ErrInvalidName,
 		}, {
 			testName: "Already exists",
@@ -58,10 +61,11 @@ func TestCreateProject(t *testing.T) {
 			expStorage:       true,
 			storageInpit:     &projectdomain.ProjectDomain{OwnerId: 1, Name: "Name"},
 			storageReturnErr: storage.ErrAlreadyExists,
+			storageReturnId:  0,
 
 			createInput: createmodel.NewCreateProjectInput(1, "Name"),
 
-			expOut: createmodel.NewCreateProjectOutput(false),
+			expOut: createmodel.NewCreateProjectOutput(0),
 			expErr: createerr.ErrAlreadyExists,
 		},
 	}
@@ -74,7 +78,7 @@ func TestCreateProject(t *testing.T) {
 			storageMock := createmocks.NewMockStorage(ctrl)
 			if tt.expStorage {
 				storageMock.EXPECT().Save(gomock.Any(), tt.storageInpit).
-					Return(tt.storageReturnErr)
+					Return(tt.storageReturnId, tt.storageReturnErr)
 			}
 
 			log := slog.New(slog.NewTextHandler(io.Discard, nil))
