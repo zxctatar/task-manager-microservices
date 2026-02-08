@@ -48,8 +48,8 @@ func (p *Postgres) Save(ctx context.Context, proj *projectdomain.ProjectDomain) 
 	return uint32(id), nil
 }
 
-func (p *Postgres) Delete(ctx context.Context, projectId uint32) error {
-	res, err := p.db.ExecContext(ctx, QuerieDelete, projectId)
+func (p *Postgres) Delete(ctx context.Context, ownerId uint32, projectId uint32) error {
+	res, err := p.db.ExecContext(ctx, QuerieDelete, projectId, ownerId)
 	if err != nil {
 		return err
 	}
