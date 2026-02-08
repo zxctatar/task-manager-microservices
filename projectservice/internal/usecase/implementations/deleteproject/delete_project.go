@@ -25,7 +25,7 @@ func NewDeleteProjectUC(log *slog.Logger, stor storage.Storage) *DeleteProjectUC
 func (d *DeleteProjectUC) Execute(ctx context.Context, in *deletemodel.DeleteProjectInput) (*deletemodel.DeleteProjectOutput, error) {
 	const op = "deleteproject.Execute"
 
-	log := d.log.With(slog.String("op", op), slog.Int("projectId", int(in.ProjectId)))
+	log := d.log.With(slog.String("op", op), slog.Int("projectId", int(in.ProjectId)), slog.Int("ownerId", int(in.OwnerId)))
 
 	log.Info("starting delete project")
 
@@ -33,7 +33,7 @@ func (d *DeleteProjectUC) Execute(ctx context.Context, in *deletemodel.DeletePro
 		return deletemodel.NewDeleteProjectOutput(false), deleteerr.ErrInvalidProjectId
 	}
 
-	err := d.stor.Delete(ctx, in.ProjectId)
+	err := d.stor.Delete(ctx, in.ProjectId, in.OwnerId)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			log.Info("project not found")
