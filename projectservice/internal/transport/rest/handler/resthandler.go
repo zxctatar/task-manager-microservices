@@ -136,17 +136,12 @@ func (h *RestHandler) Delete(ctx *gin.Context) {
 		return
 	}
 
-	in := handlmapper.DeleteRequestToInput(req, userId)
+	in := handlmapper.DeleteRequestToInput(req)
 
 	out, err := h.deleteProjUC.Execute(ctx, in)
 	if err != nil {
 		if errors.Is(err, projectdomain.ErrInvalidName) {
-			log.Info("invalid name")
-			ctx.JSON(http.StatusBadRequest, gin.H{
-				"error": err.Error(),
-			})
-		} else if errors.Is(err, projectdomain.ErrInvalidOwnerId) {
-			log.Info("invalid owner id")
+			log.Info("invalid project id")
 			ctx.JSON(http.StatusBadRequest, gin.H{
 				"error": err.Error(),
 			})
