@@ -19,9 +19,10 @@ func TestDeleteProject(t *testing.T) {
 	tests := []struct {
 		testName string
 
-		expStorage       bool
-		storageInput     uint32
-		storageReturnErr error
+		expStorage          bool
+		storageInputProjId  uint32
+		storageInputOwnerId uint32
+		storageReturnErr    error
 
 		deleteInput *deletemodel.DeleteProjectInput
 
@@ -31,33 +32,36 @@ func TestDeleteProject(t *testing.T) {
 		{
 			testName: "Success",
 
-			expStorage:       true,
-			storageInput:     1,
-			storageReturnErr: nil,
+			expStorage:          true,
+			storageInputProjId:  1,
+			storageInputOwnerId: 1,
+			storageReturnErr:    nil,
 
-			deleteInput: deletemodel.NewDeleteProjectInput(1),
+			deleteInput: deletemodel.NewDeleteProjectInput(1, 1),
 
 			expErr:    nil,
 			expOutput: deletemodel.NewDeleteProjectOutput(true),
 		}, {
 			testName: "Invalid project id",
 
-			expStorage:       false,
-			storageInput:     0,
-			storageReturnErr: storage.ErrNotFound,
+			expStorage:          false,
+			storageInputProjId:  0,
+			storageInputOwnerId: 1,
+			storageReturnErr:    storage.ErrNotFound,
 
-			deleteInput: deletemodel.NewDeleteProjectInput(0),
+			deleteInput: deletemodel.NewDeleteProjectInput(1, 0),
 
 			expErr:    deleteerr.ErrInvalidProjectId,
 			expOutput: deletemodel.NewDeleteProjectOutput(false),
 		}, {
 			testName: "Not found",
 
-			expStorage:       true,
-			storageInput:     1,
-			storageReturnErr: storage.ErrNotFound,
+			expStorage:          true,
+			storageInputProjId:  1,
+			storageInputOwnerId: 1,
+			storageReturnErr:    storage.ErrNotFound,
 
-			deleteInput: deletemodel.NewDeleteProjectInput(1),
+			deleteInput: deletemodel.NewDeleteProjectInput(1, 1),
 
 			expErr:    deleteerr.ErrProjectNotFound,
 			expOutput: deletemodel.NewDeleteProjectOutput(false),
@@ -73,7 +77,7 @@ func TestDeleteProject(t *testing.T) {
 
 			storageMock := deletemocks.NewMockStorage(ctrl)
 			if tt.expStorage {
-				storageMock.EXPECT().Delete(gomock.Any(), tt.storageInput).
+				storageMock.EXPECT().Delete(gomock.Any(), tt.storageInputOwnerId, tt.storageInputProjId).
 					Return(tt.storageReturnErr)
 			}
 
