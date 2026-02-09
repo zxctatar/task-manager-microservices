@@ -5,10 +5,12 @@ go 1.24.0
 toolchain go1.24.12
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/gin-contrib/timeout v1.1.0
 	github.com/gin-gonic/gin v1.11.0
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/goccy/go-yaml v1.19.2
+	github.com/lib/pq v1.11.1
 	github.com/stretchr/testify v1.11.1
 	go.uber.org/mock v0.5.0
 	google.golang.org/grpc v1.78.0
