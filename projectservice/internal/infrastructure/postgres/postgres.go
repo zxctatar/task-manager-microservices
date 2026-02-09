@@ -45,7 +45,7 @@ func (p *Postgres) Save(ctx context.Context, proj *projectdomain.ProjectDomain) 
 		return invalidId, err
 	}
 
-	return uint32(id), nil
+	return id, nil
 }
 
 func (p *Postgres) Delete(ctx context.Context, ownerId uint32, projectId uint32) error {
