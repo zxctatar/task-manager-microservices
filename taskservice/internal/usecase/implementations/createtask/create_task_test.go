@@ -109,7 +109,7 @@ func TestCreateUC(t *testing.T) {
 
 			log := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-			createUC := NewCreateUC(log, storMock)
+			createUC := NewCreateTaskUC(log, storMock)
 
 			out, err := createUC.Execute(context.Background(), tt.in)
 			require.Equal(t, tt.expErr, err)

@@ -14,7 +14,7 @@ type CreateTaskUC struct {
 	stor storage.StorageRepo
 }
 
-func NewCreateUC(log *slog.Logger, stor storage.StorageRepo) *CreateTaskUC {
+func NewCreateTaskUC(log *slog.Logger, stor storage.StorageRepo) *CreateTaskUC {
 	return &CreateTaskUC{
 		log:  log,
 		stor: stor,
