@@ -1,11 +1,11 @@
 package createmodel
 
 type CreateTaskOutput struct {
-	ProjectId uint32
+	TaskId uint32
 }
 
-func NewCreateOutput(projectId uint32) *CreateTaskOutput {
+func NewCreateOutput(taskId uint32) *CreateTaskOutput {
 	return &CreateTaskOutput{
-		ProjectId: projectId,
+		TaskId: taskId,
 	}
 }
