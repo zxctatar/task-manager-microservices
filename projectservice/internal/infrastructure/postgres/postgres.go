@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	projectdomain "projectservice/internal/domain/project"
 	posmapper "projectservice/internal/infrastructure/postgres/mapper"
 	posmodels "projectservice/internal/infrastructure/postgres/models"
@@ -37,8 +38,9 @@ func (p *Postgres) Save(ctx context.Context, proj *projectdomain.ProjectDomain) 
 	)
 
 	if err != nil {
-		if pgErr, ok := err.(*pq.Error); ok {
-			if pgErr.Code == "23505" {
+		var pqErr pq.Error
+		if errors.As(err, &pqErr) {
+			if pqErr.Code == "23505" {
 				return invalidId, storage.ErrAlreadyExists
 			}
 		}
@@ -70,6 +72,7 @@ func (p *Postgres) GetAll(ctx context.Context, ownerId uint32) ([]*projectdomain
 	if err != nil {
 		return nil, err
 	}
+	defer rows.Close()
 
 	var projects []*posmodels.ProjectPosModel
 	for rows.Next() {
@@ -96,4 +99,27 @@ func (p *Postgres) GetAll(ctx context.Context, ownerId uint32) ([]*projectdomain
 	}
 
 	return posmapper.ModelsToDomain(projects), nil
+}
+
+func (p *Postgres) UpdateName(ctx context.Context, ownerId uint32, projectId uint32, newName string) error {
+	res, err := p.db.ExecContext(ctx, QuerieUpdateName, newName, ownerId, projectId)
+	if err != nil {
+		var pqErr pq.Error
+		if errors.As(err, &pqErr) {
+			if pqErr.Code == "23505" {
+				return storage.ErrAlreadyExists
+			}
+		}
+		return err
+	}
+
+	ra, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if ra == 0 {
+		return storage.ErrNotFound
+	}
+
+	return nil
 }
