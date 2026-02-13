@@ -195,3 +195,67 @@ func TestPostgres_GetAll(t *testing.T) {
 		})
 	}
 }
+
+func TestPostgre_UpdateName(t *testing.T) {
+	tests := []struct {
+		testName string
+
+		ownerId      uint32
+		projectId    uint32
+		newName      string
+		rowsAffected int64
+		returnErr    error
+
+		expErr error
+	}{
+		{
+			testName: "Success",
+
+			ownerId:      1,
+			projectId:    1,
+			newName:      "newName",
+			rowsAffected: 1,
+			returnErr:    nil,
+
+			expErr: nil,
+		}, {
+			testName: "Already exists",
+
+			ownerId:      1,
+			projectId:    1,
+			newName:      "newName",
+			rowsAffected: 1,
+			returnErr:    &pq.Error{Code: "23505"},
+
+			expErr: storage.ErrAlreadyExists,
+		}, {
+			testName: "Not found",
+
+			ownerId:      1,
+			projectId:    1,
+			newName:      "newName",
+			rowsAffected: 0,
+			returnErr:    nil,
+
+			expErr: storage.ErrNotFound,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.testName, func(t *testing.T) {
+			db, mock, err := sqlmock.New()
+			require.NoError(t, err)
+			defer db.Close()
+
+			mock.ExpectExec(regexp.QuoteMeta(QuerieUpdateName)).
+				WithArgs(tt.newName, tt.ownerId, tt.projectId).
+				WillReturnResult(sqlmock.NewResult(1, tt.rowsAffected)).
+				WillReturnError(tt.returnErr)
+
+			postgres := NewPostgres(db)
+
+			err = postgres.UpdateName(context.Background(), tt.ownerId, tt.projectId, tt.newName)
+			require.Equal(t, tt.expErr, err)
+		})
+	}
+}
